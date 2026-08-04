@@ -26,7 +26,7 @@ from honestbt.metrics import evaluate  # noqa: E402
 from honestbt.strategies import buy_and_hold, mean_reversion  # noqa: E402
 
 OUT = ROOT / "docs" / "figures"
-DATA = ROOT / "tests" / "fixtures"
+DATA = ROOT / "src" / "honestbt" / "data"
 SYMBOL = "AAPL"
 
 FULL_COSTS = CostModel(

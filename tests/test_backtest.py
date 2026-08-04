@@ -30,7 +30,10 @@ from honestbt.strategies import (
     peeking_mean_reversion,
 )
 
-FIXTURES = Path(__file__).parent / "fixtures"
+from importlib import resources
+
+#: The same files the CLI ships, so the tests exercise what users get.
+FIXTURES = resources.files("honestbt") / "data"
 
 
 @pytest.fixture(scope="session")

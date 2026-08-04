@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
-from pathlib import Path
+from importlib import resources
 
 from .bars import Series
 from .costs import CostModel
@@ -17,15 +18,19 @@ from .strategies import (
     peeking_mean_reversion,
 )
 
-DATA = Path(__file__).resolve().parents[2] / "tests" / "fixtures"
+#: Price data ships inside the package. Locating it relative to the repo
+#: worked under `pip install -e` and broke under a plain `pip install`,
+#: because the package then lives in site-packages and the repo does not
+#: come with it. The README told people to use -e, which hid it.
+DATA = resources.files("honestbt") / "data"
 SYMBOLS = ("AAPL", "MSFT", "KO", "SPY")
 
 
 def load(symbol: str) -> Series:
     path = DATA / f"{symbol}_10y.json"
-    if not path.exists():
+    if not path.is_file():
         raise SystemExit(f"no data for {symbol} at {path}")
-    return Series.from_file(path)
+    return Series.from_yahoo(json.loads(path.read_text()))
 
 
 def _signal(name: str, lookback: int):

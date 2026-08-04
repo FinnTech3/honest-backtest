@@ -146,8 +146,11 @@ it would always flatter, and the data says otherwise.
 ```sh
 git clone https://github.com/FinnTech3/honest-backtest
 cd honest-backtest
-pip install -e ".[dev]"
+pip install .            # or `pip install -e ".[dev]"` to run the tests
 ```
+
+Ten years of daily bars for four symbols ship inside the package, so the
+commands below work from anywhere once installed — no checkout required.
 
 ```sh
 honestbt waterfall                      # add one honest assumption at a time
@@ -157,8 +160,7 @@ honestbt sensitivity                    # sweep the parameter, don't trust one v
 honestbt --strategy momentum waterfall  # a slower strategy, for contrast
 ```
 
-Ten years of daily bars for four symbols are committed to `tests/fixtures`, so
-everything runs offline and the numbers above reproduce exactly.
+Everything runs offline and the numbers above reproduce exactly.
 
 ## How it works
 
@@ -239,6 +241,11 @@ plausible answer rather than an error:
   about 1e-19, so an `== 0` guard misses and the division runs anyway)
 - signals return the same value whether or not future bars exist
 - the feed is checked to be split-adjusted rather than assumed to be
+- CI installs the package **without** `-e` and runs the CLI from an empty
+  directory. Data files used to be located relative to the repository,
+  which an editable install hides completely — the repo is still there, so
+  the paths resolve. A plain `pip install` gave a CLI that could not find
+  its own prices.
 - market impact is sized from volume that had happened *before* the fill.
   Average daily volume was originally taken through the bar being traded
   on, but a fill at that bar's open happens before the day's volume
