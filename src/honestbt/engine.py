@@ -137,6 +137,8 @@ def run(
                     result, model, state, series, index,
                     target=pending, price=bar.open, day=bar.day,
                     adv_window=adv_window,
+                    # Filled at the open, so only yesterday's volume is known.
+                    known_through=index - 1,
                 )
                 pending = None
 
@@ -154,6 +156,8 @@ def run(
                         result, model, state, series, index,
                         target=target, price=bar.close, day=bar.day,
                         adv_window=adv_window,
+                        # Filled at the close, so today's volume has happened.
+                        known_through=index,
                     )
                 else:
                     pending = target
@@ -181,9 +185,12 @@ def _execute(
     price: float,
     day: date,
     adv_window: int,
+    known_through: int,
 ) -> None:
     notional = abs(target - state.weight) * state.equity
-    participation = _participation(series, index, notional, price, adv_window)
+    participation = _participation(
+        series, known_through, notional, price, adv_window
+    )
     cost = model.charge(notional, participation)
     state.equity -= cost
     result.total_cost += cost
@@ -202,13 +209,25 @@ def _execute(
 
 
 def _participation(
-    series: Series, index: int, notional: float, price: float, window: int
+    series: Series,
+    known_through: int,
+    notional: float,
+    price: float,
+    window: int,
 ) -> float:
-    """Order size as a fraction of recent average daily volume."""
-    if price <= 0 or window <= 0:
+    """Order size as a fraction of average daily volume known at fill time.
+
+    ``known_through`` is the last bar whose volume had actually happened when
+    the order was filled, and it is not always the bar being traded on. A fill
+    at today's open occurs before today's volume exists, so averaging it in
+    would size market impact using a number from after the trade — look-ahead
+    in the cost model of a project about look-ahead. A fill at today's close
+    happens once the session is over, so today counts there.
+    """
+    if price <= 0 or window <= 0 or known_through < 0:
         return 0.0
-    start = max(0, index - window + 1)
-    volumes = [b.volume for b in series.bars[start : index + 1]]
+    start = max(0, known_through - window + 1)
+    volumes = [b.volume for b in series.bars[start : known_through + 1]]
     average = sum(volumes) / len(volumes) if volumes else 0
     if average <= 0:
         return 0.0

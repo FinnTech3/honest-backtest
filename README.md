@@ -227,7 +227,7 @@ price and real execution is a schedule.
 
 ## Testing
 
-34 tests, all offline against committed fixtures.
+36 tests, all offline against committed fixtures.
 
 The regressions are the valuable ones, because each is a bug that produced a
 plausible answer rather than an error:
@@ -239,6 +239,13 @@ plausible answer rather than an error:
   about 1e-19, so an `== 0` guard misses and the division runs anyway)
 - signals return the same value whether or not future bars exist
 - the feed is checked to be split-adjusted rather than assumed to be
+- market impact is sized from volume that had happened *before* the fill.
+  Average daily volume was originally taken through the bar being traded
+  on, but a fill at that bar's open happens before the day's volume
+  exists — a look-ahead leak inside the cost model of a project about
+  look-ahead. Correcting it moved the headline figures by less than a
+  tenth of a percent, which is the honest outcome and worth reporting as
+  such rather than implying a dramatic catch.
 
 ## What I would do differently
 
