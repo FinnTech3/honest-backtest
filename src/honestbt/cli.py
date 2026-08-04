@@ -159,6 +159,63 @@ def cmd_universe(args) -> int:
     return 0
 
 
+#: Windows swept by `sensitivity`. Wide enough that a strategy working at
+#: only one of them is visible as such.
+WINDOWS = (10, 20, 30, 40, 50, 60, 75, 100, 150, 200)
+
+
+def cmd_sensitivity(args) -> int:
+    """Run the strategy across a range of parameters, not just one.
+
+    A single backtest at one setting says almost nothing, because the setting
+    was chosen after seeing the data. Sweeping shows whether the result is a
+    property of the strategy or of the number.
+    """
+    series = load(args.symbol)
+    model = LADDER[-1][1]
+    benchmark = evaluate(
+        run(series, buy_and_hold, execution=Execution.NEXT_OPEN)
+    ).annualised_return
+
+    print(f"momentum on {series.symbol}, all costs applied, "
+          f"{len(series)} sessions\n")
+    print(f"{'window':>7}{'ann. return':>13}{'sharpe':>9}{'trades':>8}"
+          f"{'vs buy & hold':>15}")
+    print("-" * 52)
+
+    results = []
+    for window in WINDOWS:
+        performance = evaluate(
+            run(series, momentum(window), execution=Execution.NEXT_OPEN,
+                costs=model)
+        )
+        results.append((window, performance))
+        print(f"{window:>7}{performance.annualised_return:>12.1%}"
+              f"{performance.sharpe:>9.2f}{performance.trades:>8}"
+              f"{performance.annualised_return - benchmark:>+14.1%}")
+
+    print("-" * 52)
+    print(f"{'buy and hold':>7}{benchmark:>12.1%}")
+
+    beat = [w for w, p in results if p.annualised_return > benchmark]
+    best_window, best = max(results, key=lambda r: r[1].annualised_return)
+
+    print(
+        f"\nWindows tried: {len(WINDOWS)}. Windows that beat buy and hold: "
+        f"{len(beat)}."
+    )
+    print(
+        f"\nThe best of them is {best_window} days at "
+        f"{best.annualised_return:.1%} and a Sharpe of {best.sharpe:.2f}, "
+        f"which\nwould read well quoted on its own. It is still "
+        f"{benchmark - best.annualised_return:.1%} a year behind\ndoing "
+        f"nothing, and it is the winner of {len(WINDOWS)} attempts — picking "
+        f"the best\nparameter after the fact is its own bias, and a "
+        f"sweep is how you see it."
+    )
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="honestbt",
@@ -182,6 +239,11 @@ def main(argv: list[str] | None = None) -> int:
 
     universe = sub.add_parser("universe", help="the honest run across symbols")
     universe.set_defaults(func=cmd_universe)
+
+    sensitivity = sub.add_parser(
+        "sensitivity", help="sweep the parameter instead of trusting one value"
+    )
+    sensitivity.set_defaults(func=cmd_sensitivity)
 
     args = parser.parse_args(argv)
     return int(args.func(args))
