@@ -1,5 +1,7 @@
 # honest-backtest
 
+[![tests](https://github.com/FinnTech3/honest-backtest/actions/workflows/ci.yml/badge.svg)](https://github.com/FinnTech3/honest-backtest/actions/workflows/ci.yml)
+
 Tests a trading strategy against ten years of real prices, then charges it for
 everything a real trade would actually have cost — and watches most of the
 profit disappear.
@@ -43,10 +45,20 @@ no costs at all                    8.4%     0.42    40.0%      0.0%
 buy and hold                      28.8%     1.02    38.5%      0.0%
 ```
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/figures/equity-dark.svg">
+  <img alt="Growth of one dollar over ten years on a log scale: buy and hold ends at 12.5x, the strategy before costs at 2.2x, and the strategy after costs at 0.8x, below the break-even line." src="docs/figures/equity-light.svg">
+</picture>
+
 It earns 8.4% a year before costs and loses 2.0% after them. The strategy turns
 over **2,853 times** its starting capital across the period, and the charges
 come to **114%** of everything you started with. You would have paid more in
 costs than you invested.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/figures/costs-dark.svg">
+  <img alt="Annualised return as each cost is applied: no costs +8.4%, plus commission +7.0%, plus spread +4.4%, plus slippage +1.8%, plus market impact -2.0%." src="docs/figures/costs-light.svg">
+</picture>
 
 Nothing here is an exotic assumption. Commission is half a basis point, the
 spread is one, slippage is one. The charge that does the damage is market

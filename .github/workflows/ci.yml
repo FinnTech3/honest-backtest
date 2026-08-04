@@ -24,3 +24,10 @@ jobs:
         run: honestbt waterfall
       - name: Show what look-ahead does
         run: honestbt lookahead
+      - name: Figures regenerate identically
+        # The charts are computed from the committed prices, so a drift
+        # between a published figure and the backtest behind it fails here.
+        run: |
+          python3 scripts/make_figures.py
+          git diff --exit-code -- docs/figures/ \
+            || (echo "committed figures do not match regenerated output" && exit 1)
