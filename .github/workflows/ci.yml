@@ -24,6 +24,8 @@ jobs:
         run: honestbt waterfall
       - name: Show what look-ahead does
         run: honestbt lookahead
+      - name: Sweep the parameter
+        run: honestbt sensitivity
       - name: Figures regenerate identically
         # The charts are computed from the committed prices, so a drift
         # between a published figure and the backtest behind it fails here.

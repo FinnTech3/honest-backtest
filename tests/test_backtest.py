@@ -338,3 +338,44 @@ def test_invalid_lookbacks_rejected():
         mean_reversion(0)
     with pytest.raises(ValueError):
         momentum(1)
+
+
+# ---- parameter sensitivity ----------------------------------------------
+
+
+def test_no_momentum_window_beats_buy_and_hold(aapl):
+    """The result that makes the single-parameter version untrustworthy.
+
+    One backtest at one setting says almost nothing, because the setting was
+    chosen after seeing the data. Sweeping shows whether the result belongs to
+    the strategy or to the number — and here no window wins, so the 50-day
+    figure quoted elsewhere is not a lucky pick, it is representative.
+    """
+    from honestbt.cli import LADDER, WINDOWS
+
+    model = LADDER[-1][1]
+    benchmark = evaluate(run(aapl, buy_and_hold)).annualised_return
+
+    returns = {
+        window: evaluate(
+            run(aapl, momentum(window), costs=model)
+        ).annualised_return
+        for window in WINDOWS
+    }
+    assert len(returns) >= 8, "sweep too narrow to say anything"
+    assert all(r < benchmark for r in returns.values()), (
+        "a window beat buy and hold — the README's conclusion needs revising"
+    )
+
+
+def test_the_best_window_still_loses(aapl):
+    """Reporting the winner of a sweep is itself a bias, so name the cost."""
+    from honestbt.cli import LADDER, WINDOWS
+
+    model = LADDER[-1][1]
+    benchmark = evaluate(run(aapl, buy_and_hold)).annualised_return
+    best = max(
+        evaluate(run(aapl, momentum(w), costs=model)).annualised_return
+        for w in WINDOWS
+    )
+    assert best < benchmark

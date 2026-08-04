@@ -94,6 +94,28 @@ Costs took 16% rather than 114%. The strategy is perfectly tradeable. It also
 returns roughly half what you would have got by buying Apple in 2016 and never
 looking at it again.
 
+One window proves nothing, though — 50 days was a number I picked. Sweeping it:
+
+```
+ window  ann. return   sharpe  trades  vs buy & hold
+     10       16.0%     0.87     392        -12.8%
+     20       26.1%     1.29     198         -2.8%
+     30       22.0%     1.14     168         -6.8%
+     50       15.2%     0.82     146        -13.6%
+    100       13.8%     0.71     107        -15.0%
+    200       15.3%     0.72      53        -13.5%
+buy and hold  28.8%
+```
+
+Ten windows tried, none beat buy and hold. That makes the 50-day figure
+representative rather than an unlucky pick.
+
+The 20-day row is the one worth staring at. A 26.1% annual return at a Sharpe
+of 1.29 would read very well quoted on its own — and it is still behind doing
+nothing, and it is the winner of ten attempts. **Reporting the best parameter
+from a sweep is itself a bias**, and running the sweep is how you catch
+yourself doing it.
+
 This is the more useful finding. Killing a strategy with transaction costs is a
 well-known result. The thing worth internalising is that surviving them is not
 the bar — the bar is beating the thing you would have done otherwise, and a
@@ -131,6 +153,7 @@ pip install -e ".[dev]"
 honestbt waterfall                      # add one honest assumption at a time
 honestbt lookahead                      # what the timing errors do alone
 honestbt universe                       # the honest run across four symbols
+honestbt sensitivity                    # sweep the parameter, don't trust one value
 honestbt --strategy momentum waterfall  # a slower strategy, for contrast
 ```
 
@@ -204,7 +227,7 @@ price and real execution is a schedule.
 
 ## Testing
 
-32 tests, all offline against committed fixtures.
+34 tests, all offline against committed fixtures.
 
 The regressions are the valuable ones, because each is a bug that produced a
 plausible answer rather than an error:
@@ -227,9 +250,8 @@ the only one I have labelled rather than solved.
 **Intraday fills.** A single open price stands in for what would really be a
 schedule, and for a strategy trading this often the difference matters.
 
-**Parameter sensitivity.** Every result is one lookback on one strategy. The
-honest version sweeps the parameter and shows the whole surface, because a
-strategy that only works at exactly 50 days is a strategy that does not work.
+**Sweep the mean reversion side too.** `sensitivity` sweeps the momentum
+window; the reversal lookback is still a single number I chose.
 
 ## Sources
 
