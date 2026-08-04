@@ -33,3 +33,24 @@ jobs:
           python3 scripts/make_figures.py
           git diff --exit-code -- docs/figures/ \
             || (echo "committed figures do not match regenerated output" && exit 1)
+
+  packaged:
+    # A plain `pip install .` — not editable. The data files live inside the
+    # package, and an editable install hides it when they do not: the repo is
+    # still on disk, so repo-relative paths keep working. This job is the one
+    # that would have caught that.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install without -e, then leave the source tree behind
+        run: |
+          pip install .
+          mkdir -p /tmp/elsewhere
+      - name: The CLI must work with the repo nowhere in sight
+        working-directory: /tmp/elsewhere
+        run: |
+          honestbt waterfall
+          honestbt universe
