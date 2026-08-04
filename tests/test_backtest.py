@@ -379,3 +379,45 @@ def test_the_best_window_still_loses(aapl):
         for w in WINDOWS
     )
     assert best < benchmark
+
+
+def test_impact_sizing_does_not_use_volume_from_after_the_fill(aapl):
+    """Regression: a look-ahead leak inside the cost model.
+
+    Average daily volume was taken through the bar being traded on. A fill at
+    that bar's open happens before the day's volume exists, so the impact
+    charge was sized with a number from after the trade. Small in effect and
+    exactly the class of error this project is about, which is why it is
+    pinned rather than quietly corrected.
+
+    Constructed so the fill day's volume is wildly unlike the days before it:
+    if it were still being averaged in, the charge would move.
+    """
+    from honestbt.engine import _participation
+
+    quiet = make_series([100.0] * 25, volume=1_000)
+    loud_bars = list(quiet.bars)
+    loud_bars[10] = Bar(
+        day=loud_bars[10].day, open=100.0, high=100.0, low=100.0,
+        close=100.0, adjusted_close=100.0, volume=10_000_000,
+    )
+    loud = Series("TEST", loud_bars)
+
+    # Filled at bar 10's open: bar 10's volume has not happened yet.
+    at_open = _participation(loud, 9, notional=10_000, price=100.0, window=20)
+    # Filled at bar 10's close: it has.
+    at_close = _participation(loud, 10, notional=10_000, price=100.0, window=20)
+
+    assert at_open > at_close, (
+        "the huge volume on the fill day must not shrink an open fill's "
+        "participation — that would be information from after the trade"
+    )
+    reference = _participation(quiet, 9, notional=10_000, price=100.0, window=20)
+    assert at_open == pytest.approx(reference)
+
+
+def test_participation_before_any_history_is_zero():
+    series = make_series([100.0, 101.0])
+    from honestbt.engine import _participation
+
+    assert _participation(series, -1, 10_000, 100.0, 20) == 0.0
