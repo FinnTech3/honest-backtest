@@ -133,7 +133,7 @@ def cmd_lookahead(args) -> int:
         "\nThe last row is what an off-by-one in a shifted column buys you, and\n"
         "it is the shape to recognise: a Sharpe no strategy earns. The first two\n"
         "rows differ only in when the fill lands, and the gap between them is\n"
-        "the overnight move — which for this strategy runs the other way, so\n"
+        "the overnight move, which for this strategy runs the other way, so\n"
         "the impossible version is not the flattering one. Look-ahead does not\n"
         "reliably inflate a result. It distorts it, and the direction depends\n"
         "on what the strategy is trading."
@@ -214,7 +214,7 @@ def cmd_sensitivity(args) -> int:
         f"{best.annualised_return:.1%} and a Sharpe of {best.sharpe:.2f}, "
         f"which\nwould read well quoted on its own. It is still "
         f"{benchmark - best.annualised_return:.1%} a year behind\ndoing "
-        f"nothing, and it is the winner of {len(WINDOWS)} attempts — picking "
+        f"nothing, and it is the winner of {len(WINDOWS)} attempts, picking "
         f"the best\nparameter after the fact is its own bias, and a "
         f"sweep is how you see it."
     )

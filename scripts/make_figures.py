@@ -79,8 +79,8 @@ def equity_chart(curves, theme: Theme) -> str:
 
     Log, because buy and hold ends about twelve times its start while the
     strategy hovers near one. On a linear axis the two strategy lines would be
-    flat against the bottom and the comparison between them — which is the
-    point — would be unreadable.
+    flat against the bottom and the comparison between them, which is the
+    point, would be unreadable.
     """
     width, height = 780, 430
     left, right, top, bottom = 56, 168, 74, 54

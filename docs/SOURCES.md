@@ -20,8 +20,8 @@ that property needs fills priced differently and the error is silent.
 
 ## Studied
 
-No code was copied from anything. The biases modelled here — look-ahead,
-survivorship, transaction costs, and square-root market impact — are standard
+No code was copied from anything. The biases modelled here, look-ahead,
+survivorship, transaction costs, and square-root market impact, are standard
 results in the market microstructure and backtesting literature rather than
 anyone's implementation.
 

@@ -8,9 +8,9 @@ too good.
 
 :class:`Execution` makes that choice visible:
 
-- ``SAME_CLOSE`` — decide on today's close, fill at today's close. Not
+- ``SAME_CLOSE``, decide on today's close, fill at today's close. Not
   achievable. Kept so the size of the lie can be measured.
-- ``NEXT_OPEN`` — decide on today's close, fill at tomorrow's open. Achievable.
+- ``NEXT_OPEN``, decide on today's close, fill at tomorrow's open. Achievable.
 
 For the distinction to mean anything, each day is split in two. A day earns an
 overnight return from the previous close to today's open, and an intraday return
@@ -220,7 +220,7 @@ def _participation(
     ``known_through`` is the last bar whose volume had actually happened when
     the order was filled, and it is not always the bar being traded on. A fill
     at today's open occurs before today's volume exists, so averaging it in
-    would size market impact using a number from after the trade — look-ahead
+    would size market impact using a number from after the trade, look-ahead
     in the cost model of a project about look-ahead. A fill at today's close
     happens once the session is over, so today counts there.
     """

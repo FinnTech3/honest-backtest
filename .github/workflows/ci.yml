@@ -35,7 +35,7 @@ jobs:
             || (echo "committed figures do not match regenerated output" && exit 1)
 
   packaged:
-    # A plain `pip install .` — not editable. The data files live inside the
+    # A plain `pip install .`, not editable. The data files live inside the
     # package, and an editable install hides it when they do not: the repo is
     # still on disk, so repo-relative paths keep working. This job is the one
     # that would have caught that.
