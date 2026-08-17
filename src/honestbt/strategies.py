@@ -1,7 +1,7 @@
 """Signals to run through the engine.
 
 Each is a plain function of the series and an index, and none of them may read
-past that index. That restriction is the whole point — a signal that peeks is
+past that index. That restriction is the whole point, a signal that peeks is
 the bias the engine exists to expose, so the rule lives here in the callables
 rather than being enforced somewhere it can be forgotten.
 

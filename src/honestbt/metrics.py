@@ -75,7 +75,7 @@ def sharpe(returns: list[float], periods: int = TRADING_DAYS) -> float:
     deviation = annualised_volatility(returns, periods)
     # Not `== 0`. A constant return series has a variance of about 1e-19
     # rather than exactly zero, and dividing by that produced a Sharpe of
-    # 2.4e16 — which is both meaningless and the exact shape of number this
+    # 2.4e16, which is both meaningless and the exact shape of number this
     # project exists to teach people to distrust.
     if deviation < NEGLIGIBLE_VOLATILITY:
         return 0.0

@@ -88,7 +88,7 @@ def test_empty_series_rejected():
 
 
 def test_yahoo_feed_is_already_split_adjusted(aapl):
-    """Checked rather than assumed — it decides how fills must be priced.
+    """Checked rather than assumed, it decides how fills must be priced.
 
     Apple split four for one in August 2020. The close series runs straight
     through it, so the only thing separating close from adjusted close in this
@@ -351,7 +351,7 @@ def test_no_momentum_window_beats_buy_and_hold(aapl):
 
     One backtest at one setting says almost nothing, because the setting was
     chosen after seeing the data. Sweeping shows whether the result belongs to
-    the strategy or to the number — and here no window wins, so the 50-day
+    the strategy or to the number, and here no window wins, so the 50-day
     figure quoted elsewhere is not a lucky pick, it is representative.
     """
     from honestbt.cli import LADDER, WINDOWS
@@ -367,7 +367,7 @@ def test_no_momentum_window_beats_buy_and_hold(aapl):
     }
     assert len(returns) >= 8, "sweep too narrow to say anything"
     assert all(r < benchmark for r in returns.values()), (
-        "a window beat buy and hold — the README's conclusion needs revising"
+        "a window beat buy and hold, the README's conclusion needs revising"
     )
 
 
@@ -413,7 +413,7 @@ def test_impact_sizing_does_not_use_volume_from_after_the_fill(aapl):
 
     assert at_open > at_close, (
         "the huge volume on the fill day must not shrink an open fill's "
-        "participation — that would be information from after the trade"
+        "participation, that would be information from after the trade"
     )
     reference = _participation(quiet, 9, notional=10_000, price=100.0, window=20)
     assert at_open == pytest.approx(reference)

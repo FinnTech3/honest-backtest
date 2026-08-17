@@ -5,7 +5,7 @@ first place a backtest goes wrong.
 
 What that difference actually contains depends on the source, and it is worth
 checking rather than assuming. **Yahoo's chart API already adjusts its OHLC for
-splits** — Apple's four-for-one in August 2020 does not appear as a cliff in the
+splits**, Apple's four-for-one in August 2020 does not appear as a cliff in the
 close series, which runs 124.81 to 129.04 straight through it. The `adjclose`
 field additionally removes dividends, and that is the only thing separating the
 two columns here. Apple's factor is 0.9155 at the start of a ten-year window and
@@ -20,7 +20,7 @@ from unadjusted ones and every ex-dividend day looks like a small loss.
 So: adjusted prices for returns, actual prices for what you could have
 transacted at. A source that does *not* pre-adjust for splits makes the second
 error violent rather than gradual, which is why :meth:`Series.adjustment_jumps`
-exists — to find out which kind of data you have instead of trusting a docstring.
+exists, to find out which kind of data you have instead of trusting a docstring.
 """
 
 from __future__ import annotations
@@ -50,7 +50,7 @@ class Bar:
     def adjusted(self, raw_price: float) -> float:
         """Put a raw price from this bar onto the adjusted scale.
 
-        Needed whenever an execution price — an open, a high, a limit — has to
+        Needed whenever an execution price, an open, a high, a limit, has to
         be compared against a return series computed from adjusted closes.
         """
         return raw_price * self.adjustment_factor

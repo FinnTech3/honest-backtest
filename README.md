@@ -3,7 +3,7 @@
 [![tests](https://github.com/FinnTech3/honest-backtest/actions/workflows/ci.yml/badge.svg)](https://github.com/FinnTech3/honest-backtest/actions/workflows/ci.yml)
 
 Tests a trading strategy against ten years of real prices, then charges it for
-everything a real trade would actually have cost — and watches most of the
+everything a real trade would actually have cost, and watches most of the
 profit disappear.
 
 ## What this is
@@ -13,7 +13,7 @@ money. Give it historical prices, have it buy and sell on some rule, add up the
 result. Almost every such program flatters the strategy, and usually in the same
 few ways.
 
-It assumes you bought at the closing price on the day you decided to buy — which
+It assumes you bought at the closing price on the day you decided to buy, which
 you could not have, because you did not know the closing price until the close.
 It assumes trading is free. It assumes that when you decided to sell 50,000
 shares, someone was waiting to take all 50,000 at the price on the screen.
@@ -30,7 +30,7 @@ Two things, and the second surprised me more.
 
 ### High turnover does not survive contact with costs
 
-Daily mean reversion — buy after a down day, sell after an up day — on Apple,
+Daily mean reversion, buy after a down day, sell after an up day, on Apple,
 ten years:
 
 ```
@@ -62,7 +62,7 @@ costs than you invested.
 
 Nothing here is an exotic assumption. Commission is half a basis point, the
 spread is one, slippage is one. The charge that does the damage is market
-impact — your own order pushing the price against you — and it is the one
+impact, your own order pushing the price against you, and it is the one
 missing from every naive backtest.
 
 Across four symbols with all costs applied, three of the four lose money:
@@ -75,7 +75,7 @@ KO              -15.7%    -0.77     1273     72.0%
 SPY              -7.7%    -0.36     1261     45.3%
 ```
 
-Microsoft is positive, and I do not believe it. Its cost drag is 250% — the
+Microsoft is positive, and I do not believe it. Its cost drag is 250%: the
 strategy paid two and a half times the starting capital in charges and came out
 ahead anyway. That is what a lucky path looks like, not an edge.
 
@@ -94,7 +94,7 @@ Costs took 16% rather than 114%. The strategy is perfectly tradeable. It also
 returns roughly half what you would have got by buying Apple in 2016 and never
 looking at it again.
 
-One window proves nothing, though — 50 days was a number I picked. Sweeping it:
+One window proves nothing, though. 50 days was a number I picked, so I swept it:
 
 ```
  window  ann. return   sharpe  trades  vs buy & hold
@@ -111,14 +111,14 @@ Ten windows tried, none beat buy and hold. That makes the 50-day figure
 representative rather than an unlucky pick.
 
 The 20-day row is the one worth staring at. A 26.1% annual return at a Sharpe
-of 1.29 would read very well quoted on its own — and it is still behind doing
+of 1.29 would read very well quoted on its own, and it is still behind doing
 nothing, and it is the winner of ten attempts. **Reporting the best parameter
 from a sweep is itself a bias**, and running the sweep is how you catch
 yourself doing it.
 
 This is the more useful finding. Killing a strategy with transaction costs is a
 well-known result. The thing worth internalising is that surviving them is not
-the bar — the bar is beating the thing you would have done otherwise, and a
+the bar, the bar is beating the thing you would have done otherwise, and a
 backtest that never runs the benchmark will never tell you that it failed.
 
 ### What a look-ahead bug looks like
@@ -131,8 +131,8 @@ read tomorrow's price (a real bug)             726.0%     8.47
 ```
 
 The bottom row is one off-by-one in a shifted column. 726% a year, Sharpe 8.47.
-Worth knowing the shape, because if a result ever looks like that, this is why —
-nothing else produces it.
+Worth knowing the shape, because if a result ever looks like that, this is why.
+Nothing else produces it.
 
 The top two rows are more interesting than I expected. They differ only in when
 the fill lands, and the impossible one is *worse*. The gap between them is the
@@ -150,7 +150,7 @@ pip install .            # or `pip install -e ".[dev]"` to run the tests
 ```
 
 Ten years of daily bars for four symbols ship inside the package, so the
-commands below work from anywhere once installed — no checkout required.
+commands below work from anywhere once installed. No checkout required.
 
 ```sh
 honestbt waterfall                      # add one honest assumption at a time
@@ -171,7 +171,7 @@ returns and simply *records* a fill price produces identical results whether it
 fills at today's close or tomorrow's open. The fill price never touches the
 profit, so the entire look-ahead comparison silently measures nothing. My first
 engine did exactly this, and the two execution modes agreed to the last decimal
-place — which looked like the modes being equivalent rather than the code being
+place, which looked like the modes being equivalent rather than the code being
 broken.
 
 So each session is two legs. A day earns an **overnight** return from the
@@ -190,7 +190,7 @@ at $24.23 in 2016.
 
 I checked what the difference actually contains rather than assuming, and it is
 worth checking: **Yahoo's chart API already adjusts its OHLC for splits.**
-Apple's four-for-one in August 2020 does not appear as a cliff — the close runs
+Apple's four-for-one in August 2020 does not appear as a cliff: the close runs
 124.81 to 129.04 straight through it. Only dividends separate the two columns
 here. A feed that does *not* pre-adjust makes fill pricing wrong by the whole
 split ratio, so `Series.looks_split_adjusted()` exists to find out which kind you
@@ -214,7 +214,7 @@ each other and not for pricing an actual trade.
 **No shorting constraints, no borrow cost, no margin.** The mean reversion
 strategy goes short half the time and pays nothing for the privilege, which
 flatters it further. Adding borrow costs would make the result worse, not
-better, so the conclusion survives — but the number would move.
+better, so the conclusion survives, but the number would move.
 
 **Four symbols, all of which still exist.** This is survivorship bias and I have
 not fixed it, only labelled it. A universe of companies that lasted ten years is
@@ -224,7 +224,7 @@ point-in-time constituent list, which is not free.
 **The risk-free rate is zero.** With cash paying 5%, a strategy earning 4% has a
 negative excess return and the Sharpe here would report it as positive.
 
-**Daily bars.** Nothing intraday, so the fill model is coarse — the open is one
+**Daily bars.** Nothing intraday, so the fill model is coarse, the open is one
 price and real execution is a schedule.
 
 ## Testing
@@ -243,13 +243,13 @@ plausible answer rather than an error:
 - the feed is checked to be split-adjusted rather than assumed to be
 - CI installs the package **without** `-e` and runs the CLI from an empty
   directory. Data files used to be located relative to the repository,
-  which an editable install hides completely — the repo is still there, so
+  which an editable install hides completely, the repo is still there, so
   the paths resolve. A plain `pip install` gave a CLI that could not find
   its own prices.
 - market impact is sized from volume that had happened *before* the fill.
   Average daily volume was originally taken through the bar being traded
   on, but a fill at that bar's open happens before the day's volume
-  exists — a look-ahead leak inside the cost model of a project about
+  exists, a look-ahead leak inside the cost model of a project about
   look-ahead. Correcting it moved the headline figures by less than a
   tenth of a percent, which is the honest outcome and worth reporting as
   such rather than implying a dramatic catch.

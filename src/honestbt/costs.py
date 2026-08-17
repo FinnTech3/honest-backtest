@@ -4,17 +4,17 @@ A backtest that ignores these is not a backtest of a strategy, it is a
 backtest of a price series. Four charges, in rough order of how often they
 are left out:
 
-**Commission** — the broker's fee. The only one most people remember, and
+**Commission**, the broker's fee. The only one most people remember, and
 usually the smallest.
 
-**Spread** — you buy at the ask and sell at the bid, so you pay half the
+**Spread**, you buy at the ask and sell at the bid, so you pay half the
 spread on entry and half on exit. Backtests priced off the close pay neither
 and quietly assume you always traded at the midpoint.
 
-**Slippage** — the price moved between deciding and arriving. Independent of
+**Slippage**, the price moved between deciding and arriving. Independent of
 size; this is latency and luck, not impact.
 
-**Market impact** — your own order moves the price against you, and it grows
+**Market impact**, your own order moves the price against you, and it grows
 with the square root of how much of the day's volume you are. A strategy that
 looks fine on 100 shares can be unrunnable at size, and this is the term that
 kills it.
@@ -33,7 +33,7 @@ class CostModel:
     """Per-trade charges, all in basis points of traded notional."""
 
     commission_bps: float = 0.0
-    #: Half the quoted spread — what you give up crossing it once.
+    #: Half the quoted spread, what you give up crossing it once.
     half_spread_bps: float = 0.0
     slippage_bps: float = 0.0
     #: Impact in bps at 100% participation. Scales with sqrt(participation),
